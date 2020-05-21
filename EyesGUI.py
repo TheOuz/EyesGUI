@@ -1,3 +1,14 @@
+### BEGIN INIT INFO
+#Provides: USER GUI
+#Required-Start: $remote_fs $syslog
+#Required-Stop: $remote_fs $syslog
+#Default-Start: 2 3 4 5
+#Default-Stop: 0 1 6
+#Short-Description: Start daemon at boot time
+#DEscription: Enable service provided by daemon
+### END INIT INFO
+
+
 """
 Programmed By: Edward Ouzman
 Designed for: Eyes & Ears Program
@@ -6,11 +17,12 @@ Created: 18/05/2020
 
 try:
     import tkinter as tk
+    import os
     #from PIL import ImageTK,Image
 except:
     import tkinter as tk
     #from PIL import ImageTK,Image
-
+    import os
 
 class GUIMain():
     def __init__(self):
@@ -26,7 +38,7 @@ class GUIMain():
         """creates the instance of tkinter which is required for the GUI, also sets dimensions of the window, removes the top windows bar and sets the window to always be on top"""
         self.root = tk.Tk()
         self.root.overrideredirect(True)
-        self.root.geometry('1230x400+125+200')
+        self.root.geometry('1230x400+350+300')
         self.root.wm_attributes("-topmost", True)
         return "Main GUI Window created!"
 
@@ -74,7 +86,7 @@ class GUIMain():
 
     def __client_exit__(self):
         self.root.destroy()
-
+        exit()
 
     def __otherButtonFunction__(self):
         self.root.destroy()
@@ -87,8 +99,10 @@ class GUIMain():
 
 
     def __InternetButtonFunction__(self):
-        pass
-
+        self.root.destroy()
+        os.system('chromium-browser https://www.google.co.uk')
+        os.system('python3 EyesGUI.py')
+        exit()
 
 class GUIMore():
     """This window consists of the additional buttons, options and settings not available on the first page"""
