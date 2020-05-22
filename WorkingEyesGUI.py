@@ -16,6 +16,7 @@ Designed for: Eyes & Ears Program
 Created: 18/05/2020
 """
 
+
 try:
     import tkinter as tk
     import os
@@ -25,12 +26,13 @@ except:
     #from PIL import ImageTK,Image
     import os
 
+
 class GUILocate():
     """Creates a small window in the bottom of the screen when the GUI is closed so the user can reopen the GUI easily"""
     def __init__(self):
         self.root = tk.Tk()
         self.root.overrideredirect(True)
-        self.root.geometry("100x100+{}+{}".format(str((setup.DimensionsX*2)-100), str((setup.DimensionsY*2)-100)))
+        self.root.geometry("100x100+{}+{}".format(str(setup.DimensionsX-100), str(setup.DimensionsY-100)))
         self.ReturnButton = tk.Button(self.root, text = "Reutrn to GUI")
         self.ReturnButton.place(x = 0, y = 0, width = 100, height = 100)
         self.ReturnButton.config(command = self.__clientExit__)
@@ -39,19 +41,68 @@ class GUILocate():
     def __clientExit__(self):
         self.root.destroy()
 
+
 class Setup():
-    """Gets the dimensions of the screen and completes some simple calculations"""
+    """Gets the dimensions of the screen, sets the size of the GUI Windows in pixels"""
     def __init__(self):
         self.DimensionsRaw = os.popen('fbset -s').read()
         self.DimensionsClean = self.DimensionsRaw.split("\"")[1]
-        self.DimensionsX = (int(int(self.DimensionsClean.split("x")[0])/2))
-        self.DimensionsY = (int(int(self.DimensionsClean.split("x")[1])/2))
+        self.DimensionsX = (int(int(self.DimensionsClean.split("x")[0])))
+        self.DimensionsY = (int(int(self.DimensionsClean.split("x")[1])))
+        self.WindowSize = ""
 
+        if self.DimensionsX < 1000:
+            self.WindowSize = "small"
+            self.GUIX = 615
+            self.GUIY1 = 200
+            self.GUIY2 = 400
+            self.GUIButtonSize = 90
+
+        elif self.DimensionsX < 2560:
+            self.WindowSize = "regular"
+            self.GUIX = 1230
+            self.GUIY1 = 400
+            self.GUIY2 = 800
+            self.GUIButtonSize = 180
+
+        else:
+            self.WindowSize = "Large"
+            self.GUIX = 1845
+            self.GUIY1 = 600
+            self.GUIY2 = 1200
+            self.GUIButtonSize = 270
+
+class ImportImages():
+    def __init__(self, importWhat):
+        self.importWhat = importWhat
+        self.SmallImagePath = '/home/pi/EyesGUI-master/SmallImg/'
+        self.RegularImagePath = '/home/pi/EyesGUI-master/RegImg/'
+        self.LargeImagePath = '/home/pi/EyesGUI-master/LargeImg/'
+        if setup.WindowSize == "small":
+            self.__import__(self.SmallImagePath, self.importWhat)
+        elif setup.WindowSize == "regular":
+            self.__import__(self.RegularImagePath, self.importWhat)
+        else:
+            self.__import__(self.LargeImagePath, self.importWhat)
+
+    def __import__(self, SizePath, importWhat):
+        self.Images = {}
+        if importWhat == "primary":
+            self.Images["InternetButton"] = tk.PhotoImage(file = '{}InternetIconAttempt2.png'.format(SizePath))
+            self.Images["Background Regular GUI"] = tk.PhotoImage(file = '{}BackgroundAttempt6.png'.format(SizePath))
+            self.Images["EmailButton"] = tk.PhotoImage(file = '{}EmailButtonAttempt2.png'.format(SizePath))
+            self.Images["ExitButton"] = tk.PhotoImage(file = '{}ExitButtonAttempt2.png'.format(SizePath))
+            self.Images["ContactHubButton"] = tk.PhotoImage(file = '{}ContactHubAttempt2.png'.format(SizePath))
+            self.Images["OtherButton"] = tk.PhotoImage(file = '{}OtherButtonAttempt3.png'.format(SizePath))
+        elif importWhat == "secondary":
+            self.Images["Background Large GUI"] = tk.PhotoImage(file = '{}SecondaryBackgroundAttempt1.png'.format(SizePath))
+            self.Images["BlankButton"] = tk.PhotoImage(file = '{}ButtonAttempt2.png'.format(SizePath))
+        return "Imported Images!"
 
 class GUIMain():
     def __init__(self):
         print(self.__InitiateInstance__())
-        print(self.__ImportImages__())
+        self.i = ImportImages("primary")
         print(self.__SetBackground__())
         print(self.__GUIAddButtons__())
         self.root.lift()
@@ -62,25 +113,25 @@ class GUIMain():
         """creates the instance of tkinter which is required for the GUI, also sets dimensions of the window, removes the top windows bar and sets the window to always be on top"""
         self.root = tk.Tk()
         self.root.overrideredirect(True)
-        self.root.geometry('1230x400+{}+{}'.format(str(setup.DimensionsX-615), str(setup.DimensionsY-200)))
+        self.root.geometry('{}x{}+{}+{}'.format(str(setup.GUIX), str(setup.GUIY1), str(int(setup.DimensionsX/2)-615), str(int(setup.DimensionsY/2)-200)))
         self.root.wm_attributes("-topmost", True)
         return "Main GUI Window created!"
 
 
     def __SetBackground__(self):
         """Sets the Main background of the window"""
-        self.background_label = tk.Label(self.root, image = self.Images["Background"])
+        self.background_label = tk.Label(self.root, image = self.i.Images["Background Regular GUI"])
         self.background_label.place(x=0,y=0)
         return "Background set!"
 
 
     def __GUIAddButtons__(self):
         """Creates the main different Buttons"""
-        self.FirstButton = self.__CreateButton__('Internet', 55, 110, self.Images["InternetButton"])
-        self.SecondButton = self.__CreateButton__('Email', 290, 110, self.Images["EmailButton"])
-        self.ThirdButton = self.__CreateButton__('Contact Hub', 525, 110, self.Images["ContactHubButton"])
-        self.FourthButton = self.__CreateButton__('Writing', 760, 110, self.Images["OtherButton"])
-        self.ExitButton = tk.Button(self.root, text = "exit", bd = 0, image = self.Images["ExitButton"], bg = "#2C2C2C", activebackground = "#2C2C2C", command = self.__client_exit__)
+        self.FirstButton = self.__CreateButton__('Internet', 55, 110, self.i.Images["InternetButton"])
+        self.SecondButton = self.__CreateButton__('Email', 290, 110, self.i.Images["EmailButton"])
+        self.ThirdButton = self.__CreateButton__('Contact Hub', 525, 110, self.i.Images["ContactHubButton"])
+        self.FourthButton = self.__CreateButton__('Writing', 760, 110, self.i.Images["OtherButton"])
+        self.ExitButton = tk.Button(self.root, text = "exit", bd = 0, image = self.i.Images["ExitButton"], bg = "#2C2C2C", activebackground = "#2C2C2C", command = self.__client_exit__)
         self.ExitButton.place(x = 995, y = 110, width = 180, height = 180)
         self.FourthButton.config(command = self.__otherButtonFunction__)
         self.FirstButton.config(command = self.__InternetButtonFunction__)
@@ -91,21 +142,9 @@ class GUIMain():
     def __CreateButton__(self, DisplayText, xValue, yValue, buttonImage):
         """Function to create custom Buttons"""
         ButtonObject = tk.Button(self.root, text = DisplayText, bd = 0, bg="#2C2C2C", image = buttonImage)
-        ButtonObject.place(x = xValue, y = yValue, width = 180, height = 180)
+        ButtonObject.place(x = xValue, y = yValue, width = setup.GUIButtonSize, height = setup.GUIButtonSize)
         return ButtonObject
 
-
-    def __ImportImages__(self):
-        """Imports all of the images into a single images array"""
-        self.Images = {}
-        self.Images["InternetButton"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/InternetIconAttempt2.png')
-        self.Images["Background"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/BackgroundAttempt6.png')
-        self.Images["EmailButton"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/EmailButtonAttempt2.png')
-        self.Images["BlankButton"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/ButtonAttempt2.png')
-        self.Images["ExitButton"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/ExitButtonAttempt2.png')
-        self.Images["ContactHubButton"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/ContactHubAttempt2.png')
-        self.Images["OtherButton"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/OtherButtonAttempt3.png')
-        return "Images Imported!"
 
 
     def __client_exit__(self):
@@ -117,8 +156,8 @@ class GUIMain():
 
 
     def __EmailButtonFunction__(self):
-
-        pass
+        self.root.destroy()
+        os.system('lxterminal -e chromium-browser https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&service=mail&sacu=1&rip=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin')
 
 
     def __InternetButtonFunction__(self):
@@ -129,26 +168,19 @@ class GUIMore():
     """This window consists of the additional buttons, options and settings not available on the first page"""
     def __init__(self):
         print(self.__CreateInstance__())
-        print(self.__ImportImages__())
+        self.i = ImportImages("secondary")
         print(self.__SetBackground__())
         print(self.__GUIAddButtons__())
 
     def __CreateInstance__(self):
         self.root = tk.Tk()
         self.root.overrideredirect(True)
-        self.root.geometry('1230x800+{}+{}'.format(str(setup.DimensionsX-615), str(setup.DimensionsY-400)))
+        self.root.geometry('{}x{}+{}+{}'.format(str(setup.GUIX), str(setup.GUIY2), str(int(setup.DimensionsX/2)-615), str(int(setup.DimensionsY/2)-400)))
         return "Created Seconary Instance Window"
 
 
-    def __ImportImages__(self):
-        self.Images = {}
-        self.Images["Background"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/SecondaryBackgroundAttempt1.png')
-        self.Images["Blank Button"] = tk.PhotoImage(file = '/home/pi/EyesGUI-master/ButtonAttempt2.png')
-        return "Images Imported!"
-
-
     def __SetBackground__(self):
-        self.Background_label = tk.Label(self.root, image = self.Images["Background"])
+        self.Background_label = tk.Label(self.root, image = self.i.Images["Background Large GUI"])
         self.Background_label.place(x=0, y=0)
         self.Background_label.bind('<Button-1>', self.__BackToMain__)
         return "Background image set!"
@@ -156,23 +188,23 @@ class GUIMore():
     def __CreateButton__(self, DisplayText, xValue, yValue, buttonImage):
         """Function to create custom Buttons"""
         ButtonObject = tk.Button(self.root, text = DisplayText, bd = 0, bg="#2C2C2C", image = buttonImage)
-        ButtonObject.place(x = xValue, y = yValue, width = 180, height = 180)
+        ButtonObject.place(x = xValue, y = yValue, width = setup.GUIButtonSize, height = setup.GUIButtonSize)
         return ButtonObject
 
     def __GUIAddButtons__(self):
         self.Buttons = {}
         self.FirstRowHeight = 170
         self.SecondRowHeight = 405
-        self.Buttons["1.0"] = self.__CreateButton__("Button", 55, self.FirstRowHeight, self.Images["Blank Button"])
-        self.Buttons["1.1"] = self.__CreateButton__("Button", 290, self.FirstRowHeight, self.Images["Blank Button"])
-        self.Buttons["1.2"] = self.__CreateButton__("Button", 525, self.FirstRowHeight, self.Images["Blank Button"])
-        self.Buttons["1.3"] = self.__CreateButton__("Button", 760, self.FirstRowHeight, self.Images["Blank Button"])
-        self.Buttons["1.4"] = self.__CreateButton__("Button", 995, self.FirstRowHeight, self.Images["Blank Button"])
-        self.Buttons["2.0"] = self.__CreateButton__("Button", 55, self.SecondRowHeight, self.Images["Blank Button"])
-        self.Buttons["2.1"] = self.__CreateButton__("Button", 290, self.SecondRowHeight, self.Images["Blank Button"])
-        self.Buttons["2.2"] = self.__CreateButton__("Button", 525, self.SecondRowHeight, self.Images["Blank Button"])
-        self.Buttons["2.3"] = self.__CreateButton__("Button", 760, self.SecondRowHeight, self.Images["Blank Button"])
-        self.Buttons["2.4"] = self.__CreateButton__("Button", 995, self.SecondRowHeight, self.Images["Blank Button"])
+        self.Buttons["1.0"] = self.__CreateButton__("Button", 55, self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.1"] = self.__CreateButton__("Button", 290, self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.2"] = self.__CreateButton__("Button", 525, self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.3"] = self.__CreateButton__("Button", 760, self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.4"] = self.__CreateButton__("Button", 995, self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.0"] = self.__CreateButton__("Button", 55, self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.1"] = self.__CreateButton__("Button", 290, self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.2"] = self.__CreateButton__("Button", 525, self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.3"] = self.__CreateButton__("Button", 760, self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.4"] = self.__CreateButton__("Button", 995, self.SecondRowHeight, self.i.Images["BlankButton"])
         return "Added Buttons"
 
 
@@ -187,14 +219,17 @@ class Settings():
         with open(self.FileName) as f:
             self.raw = f.readlines()
         print(self.raw)
-
-        if self.raw == "settings\n":
+"""
+        if self.raw[0] == "settings\n":
             #FORM FOR USER SETTINGS GOES HERE
-            pass
+            self.root = tk.Tk()
+            self.root.geometry('1230x800+{}+{}'.format(str(int(setup.DimensionsX/2)-615), str(int(setup.DimensionsY/2)-400)))
+            self.root.overrideredirect(True)
+            #self.root.mainloop()
         else:
             #asign the values for different settings here
             pass
-
+"""
 
 if __name__ == "__main__":
     """Where the application starts"""
