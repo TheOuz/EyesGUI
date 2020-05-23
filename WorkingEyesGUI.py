@@ -64,7 +64,14 @@ class Setup():
             self.GUIY1 = 400
             self.GUIY2 = 800
             self.GUIButtonSize = 180
-
+            self.ButtonPositionsX = []
+            self.PositionCounter = 55
+            for x in range(0,5):
+                self.ButtonPositionsX.append(self.PositionCounter)
+                self.PositionCounter += 235
+            self.RowHeightMain = 110
+            self.RowHeightSecondary1 = 170
+            self.RowHeightSecondary2 = 405
         else:
             self.WindowSize = "Large"
             self.GUIX = 1845
@@ -89,13 +96,13 @@ class ImportImages():
         self.Images = {}
         if importWhat == "primary":
             self.Images["InternetButton"] = tk.PhotoImage(file = '{}InternetIconAttempt2.png'.format(SizePath))
-            self.Images["Background Regular GUI"] = tk.PhotoImage(file = '{}BackgroundAttempt6.png'.format(SizePath))
+            self.Images["Background Regular GUI"] = tk.PhotoImage(file = '{}BackgroundAttempt8.png'.format(SizePath))
             self.Images["EmailButton"] = tk.PhotoImage(file = '{}EmailButtonAttempt2.png'.format(SizePath))
             self.Images["ExitButton"] = tk.PhotoImage(file = '{}ExitButtonAttempt2.png'.format(SizePath))
             self.Images["ContactHubButton"] = tk.PhotoImage(file = '{}ContactHubAttempt2.png'.format(SizePath))
             self.Images["OtherButton"] = tk.PhotoImage(file = '{}OtherButtonAttempt3.png'.format(SizePath))
         elif importWhat == "secondary":
-            self.Images["Background Large GUI"] = tk.PhotoImage(file = '{}SecondaryBackgroundAttempt1.png'.format(SizePath))
+            self.Images["Background Large GUI"] = tk.PhotoImage(file = '{}SecondaryBackgroundAttempt2.png'.format(SizePath))
             self.Images["BlankButton"] = tk.PhotoImage(file = '{}ButtonAttempt2.png'.format(SizePath))
         return "Imported Images!"
 
@@ -127,12 +134,12 @@ class GUIMain():
 
     def __GUIAddButtons__(self):
         """Creates the main different Buttons"""
-        self.FirstButton = self.__CreateButton__('Internet', 55, 110, self.i.Images["InternetButton"])
-        self.SecondButton = self.__CreateButton__('Email', 290, 110, self.i.Images["EmailButton"])
-        self.ThirdButton = self.__CreateButton__('Contact Hub', 525, 110, self.i.Images["ContactHubButton"])
-        self.FourthButton = self.__CreateButton__('Writing', 760, 110, self.i.Images["OtherButton"])
-        self.ExitButton = tk.Button(self.root, text = "exit", bd = 0, image = self.i.Images["ExitButton"], bg = "#2C2C2C", activebackground = "#2C2C2C", command = self.__client_exit__)
-        self.ExitButton.place(x = 995, y = 110, width = 180, height = 180)
+        self.FirstButton = self.__CreateButton__('Internet', setup.ButtonPositionsX[0], setup.RowHeightMain, self.i.Images["InternetButton"])
+        self.SecondButton = self.__CreateButton__('Email', setup.ButtonPositionsX[1], setup.RowHeightMain, self.i.Images["EmailButton"])
+        self.ThirdButton = self.__CreateButton__('Contact Hub', setup.ButtonPositionsX[2], setup.RowHeightMain, self.i.Images["ContactHubButton"])
+        self.FourthButton = self.__CreateButton__('Writing', setup.ButtonPositionsX[3], setup.RowHeightMain, self.i.Images["OtherButton"])
+        self.ExitButton = self.__CreateButton__('Exit Button', setup.ButtonPositionsX[4], setup.RowHeightMain, self.i.Images["ExitButton"])
+        self.ExitButton.config(command = self.__client_exit__)
         self.FourthButton.config(command = self.__otherButtonFunction__)
         self.FirstButton.config(command = self.__InternetButtonFunction__)
         self.SecondButton.config(command = self.__EmailButtonFunction__)
@@ -195,16 +202,16 @@ class GUIMore():
         self.Buttons = {}
         self.FirstRowHeight = 170
         self.SecondRowHeight = 405
-        self.Buttons["1.0"] = self.__CreateButton__("Button", 55, self.FirstRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["1.1"] = self.__CreateButton__("Button", 290, self.FirstRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["1.2"] = self.__CreateButton__("Button", 525, self.FirstRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["1.3"] = self.__CreateButton__("Button", 760, self.FirstRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["1.4"] = self.__CreateButton__("Button", 995, self.FirstRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["2.0"] = self.__CreateButton__("Button", 55, self.SecondRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["2.1"] = self.__CreateButton__("Button", 290, self.SecondRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["2.2"] = self.__CreateButton__("Button", 525, self.SecondRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["2.3"] = self.__CreateButton__("Button", 760, self.SecondRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["2.4"] = self.__CreateButton__("Button", 995, self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.0"] = self.__CreateButton__("Button", setup.ButtonPositionsX[0], self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.1"] = self.__CreateButton__("Button", setup.ButtonPositionsX[1], self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.2"] = self.__CreateButton__("Button", setup.ButtonPositionsX[2], self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.3"] = self.__CreateButton__("Button", setup.ButtonPositionsX[3], self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.4"] = self.__CreateButton__("Button", setup.ButtonPositionsX[4], self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.0"] = self.__CreateButton__("Button", setup.ButtonPositionsX[0], self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.1"] = self.__CreateButton__("Button", setup.ButtonPositionsX[1], self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.2"] = self.__CreateButton__("Button", setup.ButtonPositionsX[2], self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.3"] = self.__CreateButton__("Button", setup.ButtonPositionsX[3], self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.4"] = self.__CreateButton__("Button", setup.ButtonPositionsX[4], self.SecondRowHeight, self.i.Images["BlankButton"])
         return "Added Buttons"
 
 
