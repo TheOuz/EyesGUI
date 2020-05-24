@@ -20,12 +20,19 @@ Created: 18/05/2020
 try:
     import tkinter as tk
     import os
+    import threading
     #from PIL import ImageTK,Image
 except:
     import tkinter as tk
     #from PIL import ImageTK,Image
     import os
+    import threading
 
+class ThreadedInstance():
+    def __init__(self, command):
+        self.ThreadingCommand = lambda: os.system('{}'.format(command))
+        self.Thread = threading.Thread(target = self.ThreadingCommand)
+        self.Thread.start()
 
 class GUILocate():
     """Creates a small window in the bottom of the screen when the GUI is closed so the user can reopen the GUI easily"""
@@ -41,7 +48,8 @@ class GUILocate():
 
     def __clientExit__(self):
         self.root.destroy()
-
+        os.system('pkill chromium')
+        os.system('pkill abiword')
 
 class Setup():
     """Gets the dimensions of the screen, sets the size of the GUI Windows in pixels"""
@@ -109,6 +117,8 @@ class ImportImages():
             self.Images["NewsButton"] = tk.PhotoImage(file = '{}NewsButtonAttempt1.png'.format(SizePath))
             self.Images["ReturnButton"] = tk.PhotoImage(file = '{}ReturnButtonAttempt1.png'.format(SizePath))
             self.Images["FacebookButton"] = tk.PhotoImage(file = '{}FacebookButtonAttempt1.png'.format(SizePath))
+            self.Images["MentalHealthButton"] = tk.PhotoImage(file = '{}MentalHealthButtonAttempt1.png'.format(SizePath))
+            self.Images["WordButton"] = tk.PhotoImage(file = '{}WordButtonAttempt1.png'.format(SizePath))
         elif importWhat == "Return":
             self.Images["ReturnGUI"] = tk.PhotoImage(file = '{}ReturnButtonGUIAttempt1.png'.format(SizePath))
         return "Imported Images!"
@@ -171,12 +181,12 @@ class GUIMain():
 
     def __EmailButtonFunction__(self):
         self.root.destroy()
-        os.system('lxterminal -e chromium-browser https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&service=mail&sacu=1&rip=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin')
+        self.EmailCommand = ThreadedInstance('lxterminal -e chromium-browser --start-fulscreen www.gmail.com')
 
 
     def __InternetButtonFunction__(self):
         self.root.destroy()
-        os.system('lxterminal -e chromium-browser https://www.google.co.uk') 
+        self.InternetCommand = ThreadedInstance('lxterminal -e chromium-browser --start-fullscreen https://www.google.com')
 
 class GUIMore():
     """This window consists of the additional buttons, options and settings not available on the first page"""
@@ -211,30 +221,35 @@ class GUIMore():
         self.Buttons["1.0"] = self.__CreateButton__("News", setup.ButtonPositionsX[0], self.FirstRowHeight, self.i.Images["NewsButton"])
         self.Buttons["1.1"] = self.__CreateButton__("Weather", setup.ButtonPositionsX[1], self.FirstRowHeight, self.i.Images["WeatherButton"])
         self.Buttons["1.2"] = self.__CreateButton__("Facebook", setup.ButtonPositionsX[2], self.FirstRowHeight, self.i.Images["FacebookButton"])
-        self.Buttons["1.3"] = self.__CreateButton__("Button", setup.ButtonPositionsX[3], self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.3"] = self.__CreateButton__("Word", setup.ButtonPositionsX[3], self.FirstRowHeight, self.i.Images["WordButton"])
         self.Buttons["1.4"] = self.__CreateButton__("Button", setup.ButtonPositionsX[4], self.FirstRowHeight, self.i.Images["BlankButton"])
         self.Buttons["2.0"] = self.__CreateButton__("Button", setup.ButtonPositionsX[0], self.SecondRowHeight, self.i.Images["BlankButton"])
         self.Buttons["2.1"] = self.__CreateButton__("Button", setup.ButtonPositionsX[1], self.SecondRowHeight, self.i.Images["BlankButton"])
-        self.Buttons["2.2"] = self.__CreateButton__("Button", setup.ButtonPositionsX[2], self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.2"] = self.__CreateButton__("Mental Health", setup.ButtonPositionsX[2], self.SecondRowHeight, self.i.Images["MentalHealthButton"])
         self.Buttons["2.3"] = self.__CreateButton__("Button", setup.ButtonPositionsX[3], self.SecondRowHeight, self.i.Images["BlankButton"])
         self.Buttons["2.4"] = self.__CreateButton__("Return", setup.ButtonPositionsX[4], self.SecondRowHeight, self.i.Images["ReturnButton"])
         self.Buttons["1.1"].config(command = self.__WeatherButton__)
         self.Buttons["1.0"].config(command = self.__NewsButton__)
         self.Buttons["2.4"].config(command = self.__BackToMain__)
         self.Buttons["1.2"].config(command = self.__OpenFacebook__)
+        self.Buttons["1.3"].config(command = self.__OpenWord__)
         return "Added Buttons"
 
     def __WeatherButton__(self):
         self.root.destroy()
-        os.system('lxterminal -e chromium-browser https://www.bbc.co.uk/weather')
+        self.WeatherButton = ThreadedInstance('lxterminal -e chromium-browser --start-fullscreen https://www.bbc.co.uk/weather')
 
     def __NewsButton__(self):
         self.root.destroy()
-        os.system('lxterminal -e chromium-browser https://www.bbc.co.uk/news')
+        self.NewsButton = ThreadedInstance('lxterminal -e chromium-browser --start-fullscreen https://www.bbc.co.uk/news')
 
     def __OpenFacebook__(self):
         self.root.destroy()
-        os.system('lxterminal -e chromium-browser https://www.facebook.com')
+        self.FacebookButton = ThreadedInstance('lxterminal -e chromium-browser --start-fullscreen https://www.facebook.com')
+
+    def __OpenWord__(self):
+        self.root.destroy()
+        self.WordButton = ThreadedInstance('lxterminal -e abiword -g {}'.format(setup.DimensionsClean))
 
     def __BackToMain__(self):
         self.root.destroy()
