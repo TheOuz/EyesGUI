@@ -16,21 +16,21 @@ Designed for: Eyes & Ears Program
 Created: 18/05/2020
 """
 
-
 try:
+    """Try except cycle to import all the required modules or print a simple statement explaining the modules are not available"""
     import tkinter as tk
     import os
     import threading
-    #from PIL import ImageTK,Image
+    import subprocess
+
 except:
-    import tkinter as tk
-    #from PIL import ImageTK,Image
-    import os
-    import threading
+    print("Cannot import all the required modules")
+    exit()
+
 
 class ThreadedInstance():
     def __init__(self, command):
-        self.ThreadingCommand = lambda: os.system('{}'.format(command))
+        self.ThreadingCommand = lambda: subprocess.run('{}'.format(command), shell = True)
         self.Thread = threading.Thread(target = self.ThreadingCommand)
         self.Thread.start()
 
@@ -66,7 +66,9 @@ class Setup():
             self.GUIY1 = 200
             self.GUIY2 = 400
             self.GUIButtonSize = 90
-
+            self.GUIButtonSize = 90
+            self.ButtonPositionsX = []
+            self.PositionCounter = 35
         elif self.DimensionsX < 2560:
             self.WindowSize = "regular"
             self.GUIX = 1230
@@ -116,11 +118,18 @@ class ImportImages():
             self.Images["WeatherButton"] = tk.PhotoImage(file = '{}WeatherButtonAttempt1.png'.format(SizePath))
             self.Images["NewsButton"] = tk.PhotoImage(file = '{}NewsButtonAttempt1.png'.format(SizePath))
             self.Images["ReturnButton"] = tk.PhotoImage(file = '{}ReturnButtonAttempt1.png'.format(SizePath))
-            self.Images["FacebookButton"] = tk.PhotoImage(file = '{}FacebookButtonAttempt1.png'.format(SizePath))
+            self.Images["FacebookButton"] = tk.PhotoImage(file = '{}FacebookButtonAttempt2.png'.format(SizePath))
             self.Images["MentalHealthButton"] = tk.PhotoImage(file = '{}MentalHealthButtonAttempt1.png'.format(SizePath))
             self.Images["WordButton"] = tk.PhotoImage(file = '{}WordButtonAttempt1.png'.format(SizePath))
+            self.Images["OnlineShoppingButton"] = tk.PhotoImage(file = '{}OnlineShoppingButtonAttempt1.png'.format(SizePath))
+            self.Images["SettingsButton"] = tk.PhotoImage(file = '{}SettingsButtonAttempt1.png'.format(SizePath))
         elif importWhat == "Return":
             self.Images["ReturnGUI"] = tk.PhotoImage(file = '{}ReturnButtonGUIAttempt1.png'.format(SizePath))
+        elif importWhat == "Online Shopping":
+            self.Images["BackgroundOnlineShopping"] = tk.PhotoImage(file = '{}BackgroundAttempt8.png'.format(SizePath))
+            self.Images["BlankButton"] = tk.PhotoImage(file = '{}ButtonAttempt2.png'.format(SizePath))
+            self.Images["ReturnButton"] = tk.PhotoImage(file = '{}ReturnButtonAttempt1.png'.format(SizePath))
+            self.Images["OtherButton"] = tk.PhotoImage(file = '{}OtherButtonAttempt3.png'.format(SizePath))
         return "Imported Images!"
 
 class GUIMain():
@@ -137,7 +146,7 @@ class GUIMain():
         """creates the instance of tkinter which is required for the GUI, also sets dimensions of the window, removes the top windows bar and sets the window to always be on top"""
         self.root = tk.Tk()
         self.root.overrideredirect(True)
-        self.root.geometry('{}x{}+{}+{}'.format(str(setup.GUIX), str(setup.GUIY1), str(int(setup.DimensionsX/2)-615), str(int(setup.DimensionsY/2)-200)))
+        self.root.geometry('{}x{}+{}+{}'.format(str(setup.GUIX), str(setup.GUIY1), str(int(int(setup.DimensionsX/2)-(setup.GUIX/2))), str(int(int(setup.DimensionsY/2)-(setup.GUIY1/2)))))
         self.root.wm_attributes("-topmost", True)
         return "Main GUI Window created!"
 
@@ -169,8 +178,6 @@ class GUIMain():
         ButtonObject.place(x = xValue, y = yValue, width = setup.GUIButtonSize, height = setup.GUIButtonSize)
         return ButtonObject
 
-
-
     def __client_exit__(self):
         self.root.destroy()
 
@@ -181,12 +188,12 @@ class GUIMain():
 
     def __EmailButtonFunction__(self):
         self.root.destroy()
-        self.EmailCommand = ThreadedInstance('lxterminal -e chromium-browser --start-fulscreen www.gmail.com')
+        self.EmailCommand = ThreadedInstance('chromium-browser --start-fullscreen www.gmail.com')
 
 
     def __InternetButtonFunction__(self):
         self.root.destroy()
-        self.InternetCommand = ThreadedInstance('lxterminal -e chromium-browser --start-fullscreen https://www.google.com')
+        self.InternetCommand = ThreadedInstance('chromium-browser --start-fullscreen https://www.google.com')
 
 class GUIMore():
     """This window consists of the additional buttons, options and settings not available on the first page"""
@@ -222,39 +229,80 @@ class GUIMore():
         self.Buttons["1.1"] = self.__CreateButton__("Weather", setup.ButtonPositionsX[1], self.FirstRowHeight, self.i.Images["WeatherButton"])
         self.Buttons["1.2"] = self.__CreateButton__("Facebook", setup.ButtonPositionsX[2], self.FirstRowHeight, self.i.Images["FacebookButton"])
         self.Buttons["1.3"] = self.__CreateButton__("Word", setup.ButtonPositionsX[3], self.FirstRowHeight, self.i.Images["WordButton"])
-        self.Buttons["1.4"] = self.__CreateButton__("Button", setup.ButtonPositionsX[4], self.FirstRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["1.4"] = self.__CreateButton__("OnlineShopping", setup.ButtonPositionsX[4], self.FirstRowHeight, self.i.Images["OnlineShoppingButton"])
         self.Buttons["2.0"] = self.__CreateButton__("Button", setup.ButtonPositionsX[0], self.SecondRowHeight, self.i.Images["BlankButton"])
         self.Buttons["2.1"] = self.__CreateButton__("Button", setup.ButtonPositionsX[1], self.SecondRowHeight, self.i.Images["BlankButton"])
         self.Buttons["2.2"] = self.__CreateButton__("Mental Health", setup.ButtonPositionsX[2], self.SecondRowHeight, self.i.Images["MentalHealthButton"])
-        self.Buttons["2.3"] = self.__CreateButton__("Button", setup.ButtonPositionsX[3], self.SecondRowHeight, self.i.Images["BlankButton"])
+        self.Buttons["2.3"] = self.__CreateButton__("Settings", setup.ButtonPositionsX[3], self.SecondRowHeight, self.i.Images["SettingsButton"])
         self.Buttons["2.4"] = self.__CreateButton__("Return", setup.ButtonPositionsX[4], self.SecondRowHeight, self.i.Images["ReturnButton"])
         self.Buttons["1.1"].config(command = self.__WeatherButton__)
         self.Buttons["1.0"].config(command = self.__NewsButton__)
         self.Buttons["2.4"].config(command = self.__BackToMain__)
         self.Buttons["1.2"].config(command = self.__OpenFacebook__)
         self.Buttons["1.3"].config(command = self.__OpenWord__)
+        self.Buttons["1.4"].config(command = self.__OnlineShopping__)
         return "Added Buttons"
 
     def __WeatherButton__(self):
         self.root.destroy()
-        self.WeatherButton = ThreadedInstance('lxterminal -e chromium-browser --start-fullscreen https://www.bbc.co.uk/weather')
+        self.WeatherButton = ThreadedInstance('chromium-browser --start-fullscreen https://www.bbc.co.uk/weather')
 
     def __NewsButton__(self):
         self.root.destroy()
-        self.NewsButton = ThreadedInstance('lxterminal -e chromium-browser --start-fullscreen https://www.bbc.co.uk/news')
+        self.NewsButton = ThreadedInstance('chromium-browser --start-fullscreen https://www.bbc.co.uk/news')
 
     def __OpenFacebook__(self):
         self.root.destroy()
-        self.FacebookButton = ThreadedInstance('lxterminal -e chromium-browser --start-fullscreen https://www.facebook.com')
+        self.FacebookButton = ThreadedInstance('chromium-browser --start-fullscreen https://www.facebook.com')
 
     def __OpenWord__(self):
         self.root.destroy()
-        self.WordButton = ThreadedInstance('lxterminal -e abiword -g {}'.format(setup.DimensionsClean))
+        self.WordButton = ThreadedInstance('abiword -g {}'.format(setup.DimensionsClean))
+
+    def __OnlineShopping__(self):
+        self.root.destroy()
+        self.NewRoot = OnlineShopping()
 
     def __BackToMain__(self):
         self.root.destroy()
         self.newRoot = GUIMain()
         return "Returned to Main"
+
+class OnlineShopping():
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.overrideredirect(True)
+        self.root.geometry('{}x{}+{}+{}'.format(str(setup.GUIX), str(setup.GUIY1), str(int((setup.DimensionsX/2)-615)), str(int((setup.DimensionsY/2)-200))))
+        self.i = ImportImages("Online Shopping")
+        print(self.__SetBackground__())
+        print(self.__GUIAddButtons__())
+        self.root.mainloop()
+
+    def __SetBackground__(self):
+        self.root.BackgroundLabel = tk.Label(self.root, image = self.i.Images["BackgroundOnlineShopping"])
+        self.root.BackgroundLabel.place(x = 0, y = 0)
+        return "set background!"
+
+    def __GUIAddButtons__(self):
+        """Creates the online shopping buttons Buttons"""
+        self.FirstButton = self.__CreateButton__('Amazon', setup.ButtonPositionsX[0], setup.RowHeightMain, self.i.Images["BlankButton"])
+        self.SecondButton = self.__CreateButton__('Ebay', setup.ButtonPositionsX[1], setup.RowHeightMain, self.i.Images["BlankButton"])
+        self.ThirdButton = self.__CreateButton__('Very', setup.ButtonPositionsX[2], setup.RowHeightMain, self.i.Images["BlankButton"])
+        self.FourthButton = self.__CreateButton__('More', setup.ButtonPositionsX[3], setup.RowHeightMain, self.i.Images["OtherButton"])
+        self.ReturnButton = self.__CreateButton__('Return Button', setup.ButtonPositionsX[4], setup.RowHeightMain, self.i.Images["ReturnButton"])
+        self.ReturnButton.config(command = self.__ReturnButton__)
+        return 'GUI Buttons Added!'
+
+
+    def __ReturnButton__(self):
+        self.root.destroy()
+        self.newRoot = GUIMore()
+
+    def __CreateButton__(self, DisplayText, xValue, yValue, buttonImage):
+        """Function to create custom Buttons"""
+        ButtonObject = tk.Button(self.root, text = DisplayText, bd = 0, bg="#2C2C2C", image = buttonImage)
+        ButtonObject.place(x = xValue, y = yValue, width = setup.GUIButtonSize, height = setup.GUIButtonSize)
+        return ButtonObject
 
 class Settings():
     def __init__(self):
