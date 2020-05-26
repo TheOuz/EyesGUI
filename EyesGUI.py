@@ -325,6 +325,8 @@ class Settings():
 if __name__ == "__main__":
     """Where the application starts"""
     setup = Setup()
+    print((setup.DimensionsX/2)-(setup.GUIX/2))
+    print((setup.DimensionsY/2)-(setup.GUIY1/2))
     settings = Settings()
     while True:
         root = GUIMain()
